@@ -68,6 +68,7 @@ class RHierarchicalForecastPredictor(RepresentablePredictor):
     num_bottom_ts
     nodes
     tags
+    is_hts
     method_name
         hierarchical forecast or reconciliation method to be used; mutst be one of:
         "mint", "naive_bottom_up", "erm", "mint_ols", "depbu_mint", "ermParallel"
@@ -81,7 +82,6 @@ class RHierarchicalForecastPredictor(RepresentablePredictor):
     stationary
     params
     lead_time
-    is_hts
     """
 
     @validated()
@@ -93,6 +93,7 @@ class RHierarchicalForecastPredictor(RepresentablePredictor):
         num_bottom_ts: int,
         nodes: List,
         tags: np.ndarray,
+        is_hts: bool,
         method_name: str = "mint",
         fmethod: str = "arima",
         algorithm: str = "cg",
@@ -104,7 +105,6 @@ class RHierarchicalForecastPredictor(RepresentablePredictor):
         stationary: bool = False,
         params: Optional[Dict] = None,
         lead_time: int = 0,
-        is_hts: bool = True,
     ) -> None:
 
         super().__init__(freq=freq, prediction_length=prediction_length)
@@ -201,7 +201,6 @@ class RHierarchicalForecastPredictor(RepresentablePredictor):
 
         params["freq_period"] = self.period
         print("method_name:", self.method_name)
-        print('params:', params)
 
         r_params = self._robjects.vectors.ListVector(params)
 
