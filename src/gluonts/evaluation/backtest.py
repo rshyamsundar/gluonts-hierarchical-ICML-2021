@@ -166,12 +166,6 @@ def backtest_metrics(
         ts_it, forecast_it, num_series=maybe_len(test_dataset)
     )
 
-    # we only log aggregate metrics for now as item metrics may be very large
-    for name, value in agg_metrics.items():
-        if not name[0].isdigit():
-            print(name)
-            serialize_message(logger, f"metric-{name}", value)
-
     if logging_file is not None:
         # Close the file handler to avoid letting the file open.
         # https://stackoverflow.com/questions/24816456/python-logging-wont-shutdown
