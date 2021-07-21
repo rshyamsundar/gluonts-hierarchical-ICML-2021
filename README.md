@@ -43,7 +43,13 @@ and
                        ]
 ```
 
-This will run the selected method on the selected dataset with the hyperparameters used in the paper.
+This will run the selected method 5 times on the selected dataset with the hyperparameters used in the paper.
+
+You can also specify the number of times the method should be run using the command line argument `num-runs`:
+
+```
+python experiments/run_experiment_with_best_hps.py --dataset dataset --method method --num-runs 1
+```
 
 The model will also be released in GluonTS, this fork is created to keep a version with results as close as possible as 
 the one published in the paper. 

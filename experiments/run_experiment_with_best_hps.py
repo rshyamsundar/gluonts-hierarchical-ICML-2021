@@ -1,5 +1,6 @@
 import argparse
 import json
+import numpy as np
 import os
 
 from gluonts.model.deephier import DeepHierEstimator
@@ -50,9 +51,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", type=str, required=True)
     parser.add_argument("--method", type=str, required=True)
+    parser.add_argument("--num-runs", type=int, required=False, default=5)
 
     args, _ = parser.parse_known_args()
-    print(args)
 
     dataset = args.dataset
     if dataset == "wiki":
@@ -70,6 +71,8 @@ if __name__ == "__main__":
         hyper_params = eval(method)
         estimator = RHierarchicalForecastPredictor
 
+    num_runs = args.num_runs
+    print(f"Running {method} on {dataset} dataset {num_runs} time(s)")
     print(hyper_params)
 
     job_config=dict(
@@ -77,11 +80,34 @@ if __name__ == "__main__":
         validation=False,
     )
 
-    NUM_RUNS = 5
-    for i in range(NUM_RUNS):
-        experiment.main(
+    agg_metrics_ls = []
+    level_wise_agg_metrics_ls = []
+    for i in range(num_runs):
+        print(f"********* Run {i+1} *********")
+        agg_metrics, level_wise_agg_metrics = experiment.main(
             dataset_path=f'./data/{dataset}',
             estimator=estimator,
             hyper_params=hyper_params,
             job_config=job_config
         )
+
+        agg_metrics_ls.append(agg_metrics)
+        level_wise_agg_metrics_ls.append(level_wise_agg_metrics)
+
+    print(f"\n****** Results averaged over {num_runs} runs "
+          f"(level-wise errors are shown first followed by the overall error): ******")
+
+    for metric_name in job_config["metrics"]:
+        for level_metric_name in level_wise_agg_metrics_ls[0].keys():
+            errors = [
+                level_wise_agg_metric[level_metric_name]
+                for level_wise_agg_metric in level_wise_agg_metrics_ls
+            ]
+            print(f"Mean +/- std. of {level_metric_name} over {num_runs} num_runs: {np.mean(errors)} +/- {np.std(errors)}")
+
+    for metric_name in job_config["metrics"]:
+        errors = [
+            agg_metrics[metric_name]
+            for agg_metrics in agg_metrics_ls
+        ]
+        print(f"Mean +/- std. of {metric_name} over {num_runs} num_runs: {np.mean(errors)} +/- {np.std(errors)}")

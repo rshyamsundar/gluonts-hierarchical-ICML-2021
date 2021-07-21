@@ -187,19 +187,19 @@ class Experiment:
             cum_num_nodes_per_level = np.cumsum(num_nodes_per_level)
 
         metric_name = "mean_wQuantileLoss"
+        level_wise_agg_metrics = {}
         start_ix = 0
         for l, end_ix in enumerate(cum_num_nodes_per_level):
             agg_metrics_level, _ = evaluator.get_aggregate_metrics(item_metrics.iloc[start_ix:end_ix])
-
             print(f"level_{l}_{metric_name}", agg_metrics_level[metric_name])
-            start_ix = end_ix
 
-        # just to be sure that we are taking mean consistently per level compared to the reported overall average.
-        agg_metrics_recomputed, _ = evaluator.get_aggregate_metrics(item_metrics[:cum_num_nodes_per_level[-1]])
-        assert np.allclose(agg_metrics_recomputed[metric_name], agg_metrics[metric_name])
+            level_wise_agg_metrics[f"level_{l}_{metric_name}"] = agg_metrics_level[metric_name]
+            start_ix = end_ix
 
         for name in self.job_config["metrics"]:
             print(f"{name}", agg_metrics[name])
+
+        return agg_metrics, level_wise_agg_metrics
 
 
 def main(dataset_path: str, estimator: Type[Estimator], hyper_params: Dict, job_config: Optional[Dict] = None):
@@ -216,4 +216,5 @@ def main(dataset_path: str, estimator: Type[Estimator], hyper_params: Dict, job_
         job_config=job_config,
     )
 
-    expt.run()
+    agg_metrics, level_wise_agg_metrics = expt.run()
+    return agg_metrics, level_wise_agg_metrics
