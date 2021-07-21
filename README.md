@@ -15,9 +15,9 @@ cd gluonts-hierarchical-ICML-2021
 pip install -e .
 ```
 
-The model will also be released in GluonTS mainline, this fork is created to keep a version with results as close as possible as 
-the one published in the paper. We do encourage you however, to try out GluonTS mainline as well, but due to code changes results may 
-change over time.
+The model will also be released in GluonTS mainline, this fork is created to keep a version with results as close as possible to 
+the one published in the paper. We do encourage you, however, to try out GluonTS mainline as well; due to code changes on mainline, results may 
+change over time there.
 
 (**Skip this step if you want to run only our method.**) We also provide a python wrapper for running existing methods that were implemented in R.
 To run them, `rpy2` must be installed along with R and `hts` package: 
