@@ -88,8 +88,6 @@ class Experiment:
         except:
             S = pd.read_csv(f'{self.dataset_path}/agg_mat.csv', index_col=0).values
 
-        print("agg_mat loaded")
-
         # Split into train and test sets
         dataset_str = self.dataset_path.split('/')[-1]
         prediction_length = dataset_config_dict[dataset_str]["prediction_length"]
@@ -191,7 +189,6 @@ class Experiment:
         metric_name = "mean_wQuantileLoss"
         start_ix = 0
         for l, end_ix in enumerate(cum_num_nodes_per_level):
-            print(f"Computing agg metrics for level: {l}: start_ix: {start_ix}, end_ix (exclusive): {end_ix}")
             agg_metrics_level, _ = evaluator.get_aggregate_metrics(item_metrics.iloc[start_ix:end_ix])
 
             print(f"level_{l}_{metric_name}", agg_metrics_level[metric_name])

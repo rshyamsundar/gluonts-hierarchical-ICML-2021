@@ -169,7 +169,6 @@ def backtest_metrics(
     # we only log aggregate metrics for now as item metrics may be very large
     for name, value in agg_metrics.items():
         if not name[0].isdigit():
-            print(name)
             serialize_message(logger, f"metric-{name}", value)
 
     if logging_file is not None:
