@@ -2,7 +2,7 @@
 
 
 This is a fork of [GluonTS](https://github.com/awslabs/gluon-ts/tree/master) accompanying the paper 
-"End-to-End Learning of Coherent Probabilistic Forecasts for Hierarchical Time Series" accepted at ICML 2021.
+"End-to-End Learning of Coherent Probabilistic Forecasts for Hierarchical Time Series" presented at ICML 2021.
 
 
 The code is written in [GluonTS](https://github.com/awslabs/gluon-ts/tree/master), 
