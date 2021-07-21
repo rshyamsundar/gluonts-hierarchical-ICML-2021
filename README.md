@@ -32,11 +32,9 @@ All the methods compared in the paper can be run as follows. Our method is denot
 
 ```
 python experiments/run_experiment_with_best_hps.py --dataset dataset --method method
-
-where 
-     dataset is one of: {labour, traffic, tourism, tourismlarge, wiki}
-     method is one of: {HierE2E, DeepVAR, DeepVARPlus, ETS_BU, ARIMA_BU, ETS_MINT_shr, ETS_MINT_ols, ARIMA_MINT_shr, ARIMA_MINT_ols, ETS_ERM, ARIMA_ERM, DEPBU_MINT}                        
 ```
+where dataset is one of {labour, traffic, tourism, tourismlarge, wiki} and method is one of {HierE2E, DeepVAR, DeepVARPlus, ETS_BU, ARIMA_BU, ETS_MINT_shr, ETS_MINT_ols, ARIMA_MINT_shr, ARIMA_MINT_ols, ETS_ERM, ARIMA_ERM, DEPBU_MINT}.                        
+
 
 This will run the selected method 5 times on the selected dataset with the hyperparameters used in the paper.
 
