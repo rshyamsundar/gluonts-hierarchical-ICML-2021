@@ -244,8 +244,6 @@ erm_aux <- function(h, T1, T, p, ally, fmethod, S){
 
 depbu_mint <- function(bts, tags, params) {
     print(getwd())
-    # setwd("./prob_hts_simulations/code/")
-    # install.packages("here")
     work_path <- "src/gluonts/model/r_forecast/R/prob_hts_simulations/code"
 
     source(here::here(work_path, "config_paths.R"))
@@ -266,11 +264,6 @@ depbu_mint <- function(bts, tags, params) {
     do.correction <<- params$correction
     seasonal <- params$seasonal
     stationary <- params$stationary
-
-    # NM <- cbind(rep("T", 4), rep(c("A", "B"), each = 2), rep(c("C", "D"), 2))
-    # tags <- cbind(NM[, 1], sapply(seq(2, ncol(NM)), function(j)(
-    #   apply(NM[, seq(j)], 1, paste, collapse = "")
-    # )))
 
     mc.cores.basef <- 1
     refit_step <- 40
@@ -299,16 +292,6 @@ depbu_mint <- function(bts, tags, params) {
                             param_fit_fct = list(seasonal = seasonal, stationary = stationary, approximation = FALSE, ic = "bic"),
                             param_refit_fct = list(use.initial.values = TRUE),
                             param_forecast = list( bootstrap = do.bootstrap.residuals, level = seq(1, Mhalf)/(Mhalf+1) ))
-
-    # config_forecast_bot <- list(fit_fct = auto.arima, refit_fct = Arima,
-    #                         param_fit_fct = list(seasonal = seasonal, stationary = stationary, approximation = FALSE, ic = "bic"),  # max.p = 2, max.q = 2,
-    #                         param_refit_fct = list(use.initial.values = TRUE),
-    #                         param_forecast = list( bootstrap = do.bootstrap.residuals, npaths = n_forecast_paths ))
-    #
-    # config_forecast_agg <- list(fit_fct = auto.arima, refit_fct = Arima,
-    #                         param_fit_fct = list(seasonal = seasonal, stationary = stationary, approximation = FALSE, ic = "bic"),
-    #                         param_refit_fct = list(use.initial.values = TRUE),
-    #                         param_forecast = list( bootstrap = do.bootstrap.residuals, npaths = n_forecast_paths ))
 
     P_BU <- pbu(my_bights)
 
@@ -373,24 +356,11 @@ depbu_mint <- function(bts, tags, params) {
         # sample from all basef
         print("base samples")
         base_samples <- sapply(seq(my_bights$nts), function(i){
-          #print(i)
-          #print(results$allmf[i, , ])
           sapply(seq(H), function(h){
-              # print(h)
-              # print(results$allmf[i, , ][h])
-              # qf <- results$allqf[[i]]$list_qf[[itest]][, h]
               qf <- results$allqf[[i]][[itest]][, h]
-              # sample(qf)
-              # browser()
               qf
-              # results$allmf[i, , ][h]
-              # sample(results$allmf[i, , ][h], size=M, replace=TRUE)
           })
         }, simplify = "array")
-        # browser()
-        # if (H==1) {
-        #     dim(base_samples) <- c(1, 1, length(base_samples))
-        # }
         aperm(base_samples, c(1, 3, 2))
         base_samples <- aperm(base_samples, c(1, 3, 2))
 
@@ -425,12 +395,5 @@ depbu_mint <- function(bts, tags, params) {
           indepbu_samples[, , h] <- as.matrix(t(my_bights$S %*% P_BU %*% t(samples_h)))
         }
     }
-    # print(depbumint_samples)
-    # depbumint_samples
-    #print(DIM(base_samples))
-    #print(DIM(results$allmf))
-    # browser()
-    # aperm(base_samples, c(1, 3, 2))
     aperm(depbumint_samples, c(1, 3, 2))
-    # results$allmf
 }

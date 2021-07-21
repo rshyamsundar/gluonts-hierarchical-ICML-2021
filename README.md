@@ -28,6 +28,10 @@ pip install rpy2==2.9
 pip install jinja2
 R -e 'install.packages(c("hts"), repos="https://cloud.r-project.org")'
 ``` 
+For running the competing method `PERMBU_MINT`, more packages need to be installed; in case of any issues, check R-specific [README.md](https://github.com/rshyamsundar/gluonts-hierarchical-ICML-2021/tree/master/src/gluonts/model/r_forecast/R), which provides help for both ubuntu and mac environments.
+``` 
+R -e 'install.packages(c("here", "SGL", "matrixcalc", "igraph", "gsl", "copula", "sn", "scoringRules", "fBasics", "msm", "gtools", "lubridate", "forecast", "abind", "glmnet", "propagate", "SuppDists"))'
+```
 
 ## Running
 
