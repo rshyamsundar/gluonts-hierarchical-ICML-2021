@@ -28,10 +28,11 @@ pip install jinja2
 R -e 'install.packages(c("hts"), repos="https://cloud.r-project.org")'
 ``` 
 
-All the methods compared in the paper can be run as follows. Our method is denoted as "HierE2E".
+All the methods compared in the paper can be run as follows (from inside the folder `experiments/`). Our method is denoted as "HierE2E".
 
 ```
-python experiments/run_experiment_with_best_hps.py --dataset dataset --method method
+cd experiments
+python run_experiment_with_best_hps.py --dataset dataset --method method
 
 where 
 
