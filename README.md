@@ -10,14 +10,14 @@ we recommend installing it the following way
 
 ```
 git clone https://github.com/rshyamsundar/gluonts-hierarchical-ICML-2021.git
-cd gluon-ts
+cd gluonts-hierarchical-ICML-2021
 pip install -e .
 ```
 
 Run experiments from the paper as follows:
 
 ```
-python experiments/run_experiments_with_best.hp.py --dataset dataset --method method
+python experiments/run_experiments_with_best_hps.py --dataset dataset --method method
 
 where 
 
@@ -33,7 +33,7 @@ and
                        ]
 ```
 
-This will run the selected model on the selected dataset with the hyperparameters used in the paper.
+This will run the selected method on the selected dataset with the hyperparameters used in the paper.
  
 
 The model will also be released in GluonTS, this fork is created to keep a version with results as close as possible as 
@@ -41,7 +41,7 @@ the one published in the paper.
 
 ## Citing
 
-If the datasets, benchmark, or methods are useful for your research, you can reference the following paper:
+If the datasets, benchmark, or methods are useful for your research, you can cite the following paper:
 
 ```
 

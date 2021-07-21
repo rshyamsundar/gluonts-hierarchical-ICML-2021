@@ -28,7 +28,7 @@ if __name__ == "__main__":
     """
     Run experiments from the paper as follows:
     
-    python run_experiments_with_best.hp.py --dataset dataset --method method
+    python run_experiments_with_best_hps.py --dataset dataset --method method
     
     where
      
