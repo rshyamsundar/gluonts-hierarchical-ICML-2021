@@ -23,7 +23,9 @@ if __name__ == "__main__":
                           ]
         (see config/method_config.py) 
         
-        num-runs: number of runs to consider while taking the mean and std; default 5
+        num-runs: number of runs to consider while taking the mean and std; default 5. 
+        If results are available for fewer number of runs, then mean/std is calculated over only those results 
+        available in `experiments/results` folder. 
 
     """
 
