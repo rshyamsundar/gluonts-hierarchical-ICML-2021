@@ -62,7 +62,7 @@ if __name__ == "__main__":
         dataset = "tourismsmall"
 
     method = args.method
-    if method in ["hierE2E", "DeepVAR", "DeepVARPlus"]:
+    if method in ["HierE2E", "DeepVAR", "DeepVARPlus"]:
         hyper_params = get_best_hps(dataset=dataset, method=method)
         estimator = DeepHierEstimator
     else:
@@ -95,7 +95,7 @@ if __name__ == "__main__":
         level_wise_agg_metrics_ls.append(level_wise_agg_metrics)
 
     print(f"\n****** Results averaged over {num_runs} runs "
-          f"(level-wise errors are shown first followed by the overall error): ******")
+          f"(level-wise CRPS scores are shown first followed by the overall CRPS score): ******")
 
     for metric_name in job_config["metrics"]:
         for level_metric_name in level_wise_agg_metrics_ls[0].keys():
