@@ -32,16 +32,16 @@ if __name__ == "__main__":
     
     where
      
-        dataset is one of: ["labour", "traffic", "tourism, "tourismlarge", "wiki"]
+        dataset is one of: [labour, traffic, tourism, tourismlarge, wiki]
         (see config/dataset_config.py)
         
         and 
         
-        method is one of: ["HierE2E", "DeepVAR", "DeepVARPlus", 
-                            "ETS_BU", "ARIMA_BU",
-                            "ETS_MINT_shr", "ETS_MINT_ols", "ARIMA_MINT_shr", "ARIMA_MINT_ols",
-                            "ETS_ERM", "ARIMA_ERM",
-                            "DEPBU_MINT", 
+        method is one of: [HierE2E, DeepVAR, DeepVARPlus, 
+                            ETS_BU, ARIMA_BU,
+                            ETS_MINT_shr, ETS_MINT_ols, ARIMA_MINT_shr, ARIMA_MINT_ols,
+                            ETS_ERM, ARIMA_ERM,
+                            DEPBU_MINT, 
                           ]
         (see config/method_config.py) 
     
