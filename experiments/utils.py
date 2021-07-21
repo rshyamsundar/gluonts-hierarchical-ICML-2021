@@ -41,15 +41,18 @@ def print_results(agg_metrics_ls, level_wise_agg_metrics_ls):
           f"(level-wise CRPS scores are shown first followed by the overall CRPS score): ******")
 
     for level_metric_name in level_wise_agg_metrics_ls[0].keys():
-        errors = [
+        level_wise_errors = [
             level_wise_agg_metric[level_metric_name]
             for level_wise_agg_metric in level_wise_agg_metrics_ls
         ]
-        print(f"Mean +/- std. of {level_metric_name} over {num_runs} num_runs: {np.mean(errors)} +/- {np.std(errors)}")
+        level_wise_mean, level_wise_std = np.mean(level_wise_errors), np.std(level_wise_errors)
+        print(f"Mean +/- std. of {level_metric_name} over {num_runs} num_runs: "
+              f"{level_wise_mean:.4f} +/- {level_wise_std:.4f}")
 
     metric_name = "mean_wQuantileLoss"
     errors = [
         agg_metrics[metric_name]
         for agg_metrics in agg_metrics_ls
     ]
-    print(f"Mean +/- std. of {metric_name} over {num_runs} num_runs: {np.mean(errors)} +/- {np.std(errors)}")
+    mean, std = np.mean(errors), np.std(errors)
+    print(f"Mean +/- std. of {metric_name} over {num_runs} num_runs: {mean:.4f} +/- {std:.4f}")
