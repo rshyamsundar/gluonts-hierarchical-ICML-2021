@@ -41,13 +41,13 @@ OursWarmStartLH = dict(
     warmstart_epoch_frac=0.1,  # if `CRPS_weight > 0.0 then after `epoch_frac x epochs` CRPS loss is used.
 )
 
-ETS_BU = dict(
+ETS_NaiveBU = dict(
     method_name="naive_bottom_up",
     fmethod="ets",
     nonnegative=True,
 )
 
-ARIMA_BU = dict(
+ARIMA_NaiveBU = dict(
     method_name="naive_bottom_up",
     fmethod="arima",
     nonnegative=True,
@@ -86,16 +86,16 @@ ARIMA_MINT_ols = dict(
 )
 
 ETS_ERM = dict(
-    method_name="ermParallel", # "erm",
+    method_name="ermParallel",  # "erm",
     fmethod="ets",
 )
 
 ARIMA_ERM = dict(
-    method_name="ermParallel", # "erm",
+    method_name="ermParallel",  # "erm",
     fmethod="arima",
 )
 
-DEPBU_MINT = dict(
+PERMBU_MINT = dict(
     method_name="depbu_mint",
     correction=False,
     seasonal=True,

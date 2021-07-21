@@ -39,10 +39,10 @@ if __name__ == "__main__":
         and 
         
         method is one of: [HierE2E, DeepVAR, DeepVARPlus, 
-                            ETS_BU, ARIMA_BU,
+                            ETS_NaiveBU, ARIMA_NaiveBU,
                             ETS_MINT_shr, ETS_MINT_ols, ARIMA_MINT_shr, ARIMA_MINT_ols,
                             ETS_ERM, ARIMA_ERM,
-                            DEPBU_MINT, 
+                            PERMBU_MINT, 
                           ]
         (see config/method_config.py) 
     
