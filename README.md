@@ -9,7 +9,7 @@ The code is written in [GluonTS](https://github.com/awslabs/gluon-ts/tree/master
 we recommend installing it the following way 
 
 ```
-pip install --upgrade mxnet~=1.7
+pip install --upgrade mxnet
 git clone https://github.com/rshyamsundar/gluonts-hierarchical-ICML-2021.git
 cd gluonts-hierarchical-ICML-2021
 pip install -e .

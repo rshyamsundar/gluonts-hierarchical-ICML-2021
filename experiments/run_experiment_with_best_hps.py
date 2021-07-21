@@ -85,7 +85,7 @@ if __name__ == "__main__":
     for i in range(num_runs):
         print(f"********* Run {i+1} *********")
         agg_metrics, level_wise_agg_metrics = experiment.main(
-            dataset_path=f'./data/{dataset}',
+            dataset_path=f'./experiments/data/{dataset}',
             estimator=estimator,
             hyper_params=hyper_params,
             job_config=job_config
