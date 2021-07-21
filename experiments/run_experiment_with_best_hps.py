@@ -1,7 +1,7 @@
 import argparse
-import json
-import numpy as np
-import os
+from datetime import datetime
+from pathlib import Path
+import pickle
 
 from gluonts.model.deephier import DeepHierEstimator
 from gluonts.model.r_forecast import RHierarchicalForecastPredictor
@@ -9,42 +9,29 @@ from gluonts.model.r_forecast import RHierarchicalForecastPredictor
 from config.dataset_config import dataset_config_dict
 from config.method_config import *
 import experiment
-
-
-def get_best_hps(dataset, method):
-    cwd = os.path.dirname(os.path.realpath(__file__))
-    ix = cwd.rfind('/')
-    source_dir = cwd[: ix + 1]
-
-    best_hps_by_dataset = {}
-    with open(f'{source_dir}/experiments/best_hps/best_hps_{method}.jsonl') as fp:
-        for line in fp.readlines():
-            d = json.loads(line)
-            best_hps_by_dataset.update(json.loads(d))
-
-    return best_hps_by_dataset[dataset]
+import utils
 
 
 if __name__ == "__main__":
     """
     Run experiments from the paper as follows:
     
-    python run_experiment_with_best_hps.py --dataset dataset --method method
+    python run_experiment_with_best_hps.py --dataset dataset --method method --num-runs 5
     
     where
      
         dataset is one of: [labour, traffic, tourism, tourismlarge, wiki]
         (see config/dataset_config.py)
-        
-        and 
-        
+                
         method is one of: [HierE2E, DeepVAR, DeepVARPlus, 
                             ETS_NaiveBU, ARIMA_NaiveBU,
                             ETS_MINT_shr, ETS_MINT_ols, ARIMA_MINT_shr, ARIMA_MINT_ols,
                             ETS_ERM, ARIMA_ERM,
                             PERMBU_MINT, 
                           ]
-        (see config/method_config.py) 
+        (see config/method_config.py)
+        
+        num-runs: number of re-runs; default 5 
     
     """
 
@@ -63,7 +50,7 @@ if __name__ == "__main__":
 
     method = args.method
     if method in ["HierE2E", "DeepVAR", "DeepVARPlus"]:
-        hyper_params = get_best_hps(dataset=dataset, method=method)
+        hyper_params = utils.get_best_hps(dataset=dataset, method=method)
         estimator = DeepHierEstimator
     else:
         # Each combination of forecasting method and reconciliation strategy is run separately.
@@ -80,6 +67,9 @@ if __name__ == "__main__":
         validation=False,
     )
 
+    results_path = f"./experiments/results/{method}/{dataset}"
+    Path(results_path).mkdir(parents=True, exist_ok=True)
+
     agg_metrics_ls = []
     level_wise_agg_metrics_ls = []
     for i in range(num_runs):
@@ -94,20 +84,9 @@ if __name__ == "__main__":
         agg_metrics_ls.append(agg_metrics)
         level_wise_agg_metrics_ls.append(level_wise_agg_metrics)
 
-    print(f"\n****** Results averaged over {num_runs} runs "
-          f"(level-wise CRPS scores are shown first followed by the overall CRPS score): ******")
+        # Save results
+        unique_id = datetime.now().strftime('%Y_%m_%d_%H-%M_%S')
+        with open(f"{results_path}/run_{unique_id}.pkl", "wb") as fp:
+            pickle.dump([agg_metrics, level_wise_agg_metrics], fp)
 
-    for metric_name in job_config["metrics"]:
-        for level_metric_name in level_wise_agg_metrics_ls[0].keys():
-            errors = [
-                level_wise_agg_metric[level_metric_name]
-                for level_wise_agg_metric in level_wise_agg_metrics_ls
-            ]
-            print(f"Mean +/- std. of {level_metric_name} over {num_runs} num_runs: {np.mean(errors)} +/- {np.std(errors)}")
-
-    for metric_name in job_config["metrics"]:
-        errors = [
-            agg_metrics[metric_name]
-            for agg_metrics in agg_metrics_ls
-        ]
-        print(f"Mean +/- std. of {metric_name} over {num_runs} num_runs: {np.mean(errors)} +/- {np.std(errors)}")
+    utils.print_results(agg_metrics_ls=agg_metrics_ls, level_wise_agg_metrics_ls=level_wise_agg_metrics_ls)
