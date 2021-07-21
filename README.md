@@ -4,6 +4,7 @@
 This is a fork of [GluonTS](https://github.com/awslabs/gluon-ts/tree/master) accompanying the paper 
 "End-to-End Learning of Coherent Probabilistic Forecasts for Hierarchical Time Series" presented at ICML 2021.
 
+## Setup
 
 The code is written in [GluonTS](https://github.com/awslabs/gluon-ts/tree/master), 
 we recommend installing it the following way 
@@ -28,12 +29,14 @@ pip install jinja2
 R -e 'install.packages(c("hts"), repos="https://cloud.r-project.org")'
 ``` 
 
+## Running
+
 All the methods compared in the paper can be run as follows. Our method is denoted as "HierE2E".
 
 ```
 python experiments/run_experiment_with_best_hps.py --dataset dataset --method method
 ```
-where dataset is one of {labour, traffic, tourism, tourismlarge, wiki} and method is one of {HierE2E, DeepVAR, DeepVARPlus, ETS_NaiveBU, ARIMA_NaiveBU, ETS_MINT_shr, ETS_MINT_ols, ARIMA_MINT_shr, ARIMA_MINT_ols, ETS_ERM, ARIMA_ERM, PERMBU_MINT}.                        
+where dataset is one of `{labour, traffic, tourism, tourismlarge, wiki}` and method is one of `{HierE2E, DeepVAR, DeepVARPlus, ETS_NaiveBU, ARIMA_NaiveBU, ETS_MINT_shr, ETS_MINT_ols, ARIMA_MINT_shr, ARIMA_MINT_ols, ETS_ERM, ARIMA_ERM, PERMBU_MINT}`.                        
 
 
 This will run the selected method 5 times on the selected dataset with the hyperparameters used in the paper. This script also saves the results (level-wise as well as overall scores) in `experiments/results`.
@@ -43,6 +46,7 @@ One can also limit the number of repetitions of the same method using the comman
 ```
 python experiments/run_experiment_with_best_hps.py --dataset dataset --method method --num-runs 1
 ```
+This allows doing the multiple runs of the same method in parallel.
 
 The following script fetches the saved results of previous runs and prints the mean and standard deviation over multiple runs (controlled by `num-runs`):
 
