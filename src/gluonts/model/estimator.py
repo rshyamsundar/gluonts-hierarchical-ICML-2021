@@ -11,7 +11,6 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
-from joblib import Parallel, delayed
 from typing import NamedTuple, Optional
 
 import gluonts
@@ -137,6 +136,10 @@ class DeepEnsembleEstimator(Estimator):
         shuffle_buffer_length: Optional[int] = None,
         **kwargs,
     ) -> Predictor:
+
+        # To avoid dependency on joblib.
+        from joblib import Parallel, delayed
+
         predictors = Parallel(n_jobs=self.num_deep_models, verbose=10, prefer="threads")(
             # TODO: Fix different seed for each run?
             delayed(self.estimator.train)(

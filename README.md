@@ -9,15 +9,24 @@ The code is written in [GluonTS](https://github.com/awslabs/gluon-ts/tree/master
 we recommend installing it the following way 
 
 ```
+pip install --upgrade mxnet~=1.7
 git clone https://github.com/rshyamsundar/gluonts-hierarchical-ICML-2021.git
 cd gluonts-hierarchical-ICML-2021
 pip install -e .
 ```
 
-Run experiments from the paper as follows:
+(**Skip this step if you want to run only our method.**) We also provide a python wrapper for running existing methods that were implemented in R.
+To run them, `rpy2` must be installed along with R and `hts` package: 
 
 ```
-python experiments/run_experiments_with_best_hps.py --dataset dataset --method method
+pip install rpy2==2.9 
+R -e 'install.packages(c("hts"), repos="https://cloud.r-project.org")'
+``` 
+
+All the methods compared in the paper can be run as follows. Our method is denoted as "HierE2E".
+
+```
+python experiments/run_experiment_with_best_hps.py --dataset dataset --method method
 
 where 
 
@@ -34,7 +43,6 @@ and
 ```
 
 This will run the selected method on the selected dataset with the hyperparameters used in the paper.
- 
 
 The model will also be released in GluonTS, this fork is created to keep a version with results as close as possible as 
 the one published in the paper. 
