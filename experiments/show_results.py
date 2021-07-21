@@ -46,4 +46,9 @@ if __name__ == "__main__":
         dataset = "tourismsmall"
 
     agg_metrics_ls, level_wise_agg_metrics_ls = utils.parse_results(dataset=dataset, method=method, num_runs=num_runs)
-    utils.print_results(agg_metrics_ls=agg_metrics_ls, level_wise_agg_metrics_ls=level_wise_agg_metrics_ls)
+
+    if not agg_metrics_ls:
+        print(f"No results found for {method} on {dataset}! "
+              f"First run this method using the script: `run_experiment_with_best_hps.py`")
+    else:
+        utils.print_results(agg_metrics_ls=agg_metrics_ls, level_wise_agg_metrics_ls=level_wise_agg_metrics_ls)

@@ -85,7 +85,7 @@ if __name__ == "__main__":
         level_wise_agg_metrics_ls.append(level_wise_agg_metrics)
 
         # Save results
-        unique_id = datetime.now().strftime('%Y_%m_%d_%H-%M_%S')
+        unique_id = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         with open(f"{results_path}/run_{unique_id}.pkl", "wb") as fp:
             pickle.dump([agg_metrics, level_wise_agg_metrics], fp)
 

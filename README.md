@@ -20,7 +20,7 @@ The model will also be released in GluonTS mainline, this fork is created to kee
 the one published in the paper. We do encourage you, however, to try out GluonTS mainline as well; due to code changes on mainline, results may 
 change over time there.
 
-(**Skip this step if you want to run only our method.**) We also provide a python wrapper for running existing methods that were implemented in R.
+(**Skip this step if you want to run only our method.**) We also provide a python wrapper for running existing hierarchical methods that were implemented in R.
 To run them, `rpy2` must be installed along with R and `hts` package: 
 
 ```

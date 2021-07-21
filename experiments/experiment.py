@@ -189,11 +189,12 @@ class Experiment:
         metric_name = "mean_wQuantileLoss"
         level_wise_agg_metrics = {}
         start_ix = 0
+        level_names = dataset_config_dict[dataset_str]["level_names"]
         for l, end_ix in enumerate(cum_num_nodes_per_level):
             agg_metrics_level, _ = evaluator.get_aggregate_metrics(item_metrics.iloc[start_ix:end_ix])
-            print(f"level_{l}_{metric_name}", agg_metrics_level[metric_name])
+            print(f"level_{level_names[l]}_{metric_name}", agg_metrics_level[metric_name])
 
-            level_wise_agg_metrics[f"level_{l}_{metric_name}"] = agg_metrics_level[metric_name]
+            level_wise_agg_metrics[f"level_{level_names[l]}_{metric_name}"] = agg_metrics_level[metric_name]
             start_ix = end_ix
 
         for name in self.job_config["metrics"]:
