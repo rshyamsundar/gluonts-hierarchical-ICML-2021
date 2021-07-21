@@ -40,5 +40,10 @@ if __name__ == "__main__":
     method = args.method
     num_runs = args.num_runs
 
+    if dataset == "wiki":
+        dataset = "wiki2"
+    elif dataset == "tourism":
+        dataset = "tourismsmall"
+
     agg_metrics_ls, level_wise_agg_metrics_ls = utils.parse_results(dataset=dataset, method=method, num_runs=num_runs)
     utils.print_results(agg_metrics_ls=agg_metrics_ls, level_wise_agg_metrics_ls=level_wise_agg_metrics_ls)
