@@ -17,6 +17,7 @@ from itertools import product
 
 # Third-party imports
 import mxnet as mx
+import numpy as np
 
 # First-party imports
 from gluonts.core.component import validated
@@ -69,7 +70,6 @@ class DeepHierNetwork(DeepVARNetwork):
         )
 
         self.M = M
-        self.M_broadcast = None
         self.A = A
         self.seq_axis = seq_axis
 
@@ -80,7 +80,9 @@ class DeepHierNetwork(DeepVARNetwork):
         Parameters
         ----------
         samples
-            Unconstrained samples
+            Unconstrained samples.
+            Shape: (num_samples, batch_size, seq_len, num_ts) during training and
+                   (num_parallel_samples x batch_size, seq_len, num_ts) during prediction.
 
         Returns
         -------
@@ -88,43 +90,22 @@ class DeepHierNetwork(DeepVARNetwork):
             Tensor, shape same as that of `samples`.
 
         """
-        proj_matrix_shape = self.M.shape  # (num_ts, num_ts)
-
-        num_iter_dims = len(self.seq_axis) if self.seq_axis else 0
-
-        # Expand `M` depending on the shape of samples:
-        # If seq_axis = None, during training the first axis is only `batch_size`,
-        # in which case `M` would be expanded 3 times; during prediction it would be expanded 2 times since the first
-        # axis is `batch_size x  num_parallel_samples`.
-        M_expanded = self.M
-        for i in range(len(samples.shape[num_iter_dims:-1])):
-            M_expanded = M_expanded.expand_dims(axis=0)
-
-        # If seq_axis = None broadcast M to (num_samples, batch_size, seq_len, m, m) during training
-        # and to (num_samples * batch_size, seq_len, m, m) during prediction
-        # Else broadcast to the appropriate remaining dimension
-        _shape = list(samples.shape[:-1]) if not self.seq_axis \
-            else [samples.shape[i] for i in range(len(samples.shape[:-1])) if i not in self.seq_axis]
-        self.M_broadcast = mx.nd.broadcast_to(
-            M_expanded,
-            shape=_shape + list(proj_matrix_shape),
-        )
 
         if self.seq_axis:
             # bring the axis to iterate in the beginning
             samples = mx.nd.moveaxis(samples, self.seq_axis, list(range(len(self.seq_axis))))
 
-            out = []
-            for idx in product(*[range(x) for x in [samples.shape[d] for d in range(len(self.seq_axis))]]):
-                s = samples[idx]
-                out.append(mx.nd.linalg.gemm2(self.M_broadcast, s.expand_dims(-1)).squeeze(axis=-1))
+            out = [
+                mx.nd.dot(samples[idx], self.M, transpose_b=True)
+                for idx in product(*[range(x) for x in [samples.shape[d] for d in range(len(self.seq_axis))]])
+            ]
 
             # put the axis in the correct order again
             out = mx.nd.concat(*out, dim=0).reshape(samples.shape)
             out = mx.nd.moveaxis(out, list(range(len(self.seq_axis))), self.seq_axis)
             return out
         else:
-            return mx.nd.linalg.gemm2(self.M_broadcast, samples.expand_dims(-1)).squeeze(axis=-1)
+            return mx.nd.dot(samples, self.M, transpose_b=True)
 
     def train_hybrid_forward(
         self,
@@ -295,32 +276,50 @@ class DeepHierNetwork(DeepVARNetwork):
 
     def reconciliation_error(self, samples):
         r"""
-        Computes the reconciliation error defined by the L-infinity norm of the constraint violation:
-                    || Ax ||_{\inf}
+        Computes the maximum relative reconciliation error among all the aggregated time series
+
+        .. math::
+
+                        \max_i \frac{|y_i - s_i|} {|y_i|},
+
+        where :math:`i` refers to the aggregated time series index, :math:`y_i` is the (direct) forecast obtained for
+        the :math:`i^{th}` time series and :math:`s_i` is its aggregated forecast obtained by summing the corresponding
+        bottom-level forecasts. If :math:`y_i` is zero, then the absolute difference, :math:`|s_i|`, is used instead.
+
+        This can be comupted as follows given the constraint matrix A:
+
+        .. math::
+
+                        \max \frac{|A \times samples|} {|samples[:r]|},
+
+        where :math:`r` is the number aggregated time series.
 
         Parameters
         ----------
         samples
-            Samples
+            Samples. Shape: `(*batch_shape, target_dim)`.
 
         Returns
         -------
-        Reconciliation error
-            Float
+        Float
+            Reconciliation error
+
 
         """
-        constraint_mat_shape = self.A.shape
 
-        A_expanded = self.A.expand_dims(axis=0)
-        A_broadcast = mx.nd.broadcast_to(
-            A_expanded,
-            shape=samples.shape[0:1] + constraint_mat_shape
+        num_agg_ts = self.A.shape[0]
+        forecasts_agg_ts = samples.slice_axis(
+            axis=-1, begin=0, end=num_agg_ts
+        ).asnumpy()
+
+        abs_err = mx.nd.abs(mx.nd.dot(samples, self.A, transpose_b=True)).asnumpy()
+        rel_err = np.where(
+            forecasts_agg_ts == 0,
+            abs_err,
+            abs_err / np.abs(forecasts_agg_ts),
         )
-        return mx.nd.max(
-            mx.nd.abs(
-                mx.nd.linalg_gemm2(A_broadcast, samples, transpose_b=True)
-            )
-        ).asnumpy()[0]
+
+        return np.max(rel_err)
 
     def sampling_decoder(
         self,
@@ -415,9 +414,9 @@ class DeepHierNetwork(DeepVARNetwork):
 
                 assert_shape(new_coherent_samples, new_incoherent_samples.shape)
 
-                # assert that A*X_proj ~ 0
-                if self.assert_reconciliation:
-                    assert self.reconciliation_error(samples=new_coherent_samples) < 1e-2
+                if self.compute_reconciliation_error:
+                    recon_err = self.reconciliation_error(samples=new_coherent_samples)
+                    print(f"Reconciliation error for prediction time step t={k + 1}: {recon_err}")
 
                 new_samples = new_coherent_samples
             else:
@@ -537,13 +536,13 @@ class DeepHierPredictionNetwork(DeepHierNetwork):
     def __init__(
         self,
         num_parallel_samples: int,
-        assert_reconciliation: bool,
+        compute_reconciliation_error: bool,
         coherent_pred_samples: bool,
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
         self.num_parallel_samples = num_parallel_samples
-        self.assert_reconciliation = assert_reconciliation
+        self.compute_reconciliation_error = compute_reconciliation_error
         self.coherent_pred_samples=coherent_pred_samples
 
         # for decoding the lags are shifted by one,

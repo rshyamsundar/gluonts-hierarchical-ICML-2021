@@ -101,8 +101,8 @@ class DeepHierEstimator(DeepVAREstimator):
         If non-zero, then loss is CRPS (times 'CRPS_weight') added to the default negative log-likelihood loss
     sample_LH
         Boolean flag to switch between likelihoods from samples or NN parameters. Default: False
-    assert_reconciliation
-        Flag to indicate whether to assert if the (projected) samples generated during prediction are coherent.
+    compute_reconciliation_error
+        Flag to indicate whether to compute the reconciliation error during prediction.
     coherent_train_samples
         Flag to indicate whether sampling/projection is being done during training
     coherent_pred_samples
@@ -170,7 +170,7 @@ class DeepHierEstimator(DeepVAREstimator):
         num_samples_for_loss: int = 200,
         likelihood_weight: float = 0.0,
         CRPS_weight: float = 1.0,
-        assert_reconciliation: bool = True,
+        compute_reconciliation_error: bool = True,
         coherent_train_samples: bool = True,
         coherent_pred_samples: bool = True,
         trainer: Trainer = Trainer(),
@@ -230,7 +230,7 @@ class DeepHierEstimator(DeepVAREstimator):
         self.num_samples_for_loss = num_samples_for_loss
         self.likelihood_weight = likelihood_weight
         self.CRPS_weight = CRPS_weight
-        self.assert_reconciliation = assert_reconciliation
+        self.compute_reconciliation_error = compute_reconciliation_error
         self.coherent_train_samples = coherent_train_samples
         self.coherent_pred_samples = coherent_pred_samples
         self.warmstart_epoch_frac = warmstart_epoch_frac
@@ -270,7 +270,7 @@ class DeepHierEstimator(DeepVAREstimator):
         prediction_network = DeepHierPredictionNetwork(
             M=self.M,
             A=self.A,
-            assert_reconciliation=self.assert_reconciliation,
+            compute_reconciliation_error=self.compute_reconciliation_error,
             coherent_pred_samples=self.coherent_pred_samples,
             target_dim=self.target_dim,
             num_parallel_samples=self.num_parallel_samples,
