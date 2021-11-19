@@ -64,7 +64,12 @@ If results are available for fewer number of runs, then mean/std is calculated o
 To reproduce results easier we recommend using Docker:
 
 1. Initialize the Docker image using: `make init -f Makefile.experiment`.
-2. Run each instruction using: `make run_module module="python experiments/run_experiment_with_best_hps.py --dataset dataset --method method" -f Makefile.experiment`
+2. Run each instruction using: 
+
+```
+make run_module module="python experiments/run_experiment_with_best_hps.py --dataset dataset --method method" -f Makefile.experiment
+```
+
 3. To run all `PERMBU_MINT` experiments use:
 
 ```
