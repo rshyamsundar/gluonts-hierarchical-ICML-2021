@@ -59,6 +59,25 @@ python experiments/show_results.py --dataset dataset --method method --num-runs 
 ```
 If results are available for fewer number of runs, then mean/std is calculated over only those results available in `experiments/results` folder.
 
+### Reproducing results using Docker
+
+To reproduce results easier we recommend using Docker:
+
+1. Initialize the Docker image using: `make init -f Makefile.experiment`.
+2. Run each instruction using: 
+
+```
+make run_module module="python experiments/run_experiment_with_best_hps.py --dataset dataset --method method" -f Makefile.experiment
+```
+
+3. To run all `PERMBU_MINT` experiments use:
+
+```
+for dataset in labour traffic tourism tourism large; 
+	do make run_module module="python experiments/run_experiment_with_best_hps.py --dataset $dataset --method PERMBU_MINT" -f Makefile.experiment;
+done
+```
+
 ## Citing
 
 If the datasets, benchmark, or methods are useful for your research, you can cite the following paper:

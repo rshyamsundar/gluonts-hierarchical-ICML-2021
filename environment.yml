@@ -1,0 +1,16 @@
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.7
+  - pip
+  - numpy
+  - pandas
+  - matplotlib
+  - scikit-learn
+  - statsmodels
+  - r-base
+  - pip:
+    - mxnet
+    - rpy2==2.9
+    - jinja2
