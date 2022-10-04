@@ -134,7 +134,7 @@ def download_dataset(dataset_path: Path, ds_info: GPCopulaDataset):
                 if not is_within_directory(path, member_path):
                     raise Exception("Attempted Path Traversal in Tar File")
         
-            tar.extractall(path, members, numeric_owner) 
+            tar.extractall(path, members, numeric_owner=numeric_owner) 
             
         
         safe_extract(tar, path=dataset_path)
